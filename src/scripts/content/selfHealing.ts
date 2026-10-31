@@ -1,4 +1,4 @@
-import type { VideoScript } from '../engine/types';
+import type { VideoScript } from '../../engine/types';
 
 // Utility functions
 const rng = (s: number) => () => (s = (s * 16807) % 2147483647) / 2147483647;
@@ -468,7 +468,7 @@ function bg(ctx: CanvasRenderingContext2D, i: number, s: number) {
     }
 }
 
-export const selfHealingScript: VideoScript = {
+const selfHealingScript: VideoScript = {
     id: 'self-healing',
     name: 'Self-healing materials: 1080×1920 Short',
     width: W,
@@ -513,3 +513,5 @@ export const selfHealingScript: VideoScript = {
     ],
     renderBackground: bg
 };
+
+export default selfHealingScript;

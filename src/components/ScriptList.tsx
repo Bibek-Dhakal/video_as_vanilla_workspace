@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SCRIPTS } from '../scripts/registry';
-import { AI_BRAINSTORMING_PROMPT } from '../scripts/aiPrompt';
+import { AI_BRAINSTORMING_PROMPT, AI_CODE_GENERATION_PROMPT } from '../scripts/aiPrompt';
 
 export function ScriptList() {
     const [search, setSearch] = useState('');
-    const [copied, setCopied] = useState(false);
+    const [copiedBrainstorm, setCopiedBrainstorm] = useState(false);
+    const [copiedCode, setCopiedCode] = useState(false);
     const navigate = useNavigate();
 
     const filtered = useMemo(() => {
@@ -15,10 +16,10 @@ export function ScriptList() {
         );
     }, [search]);
 
-    const handleCopyPrompt = () => {
-        navigator.clipboard.writeText(AI_BRAINSTORMING_PROMPT).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+    const handleCopy = (text: string, setStatus: (val: boolean) => void) => {
+        navigator.clipboard.writeText(text).then(() => {
+            setStatus(true);
+            setTimeout(() => setStatus(false), 2000);
         }).catch(err => {
             console.error('Failed to copy text: ', err);
         });
@@ -28,9 +29,20 @@ export function ScriptList() {
         <div className="script-list-container">
             <div className="header-actions">
                 <h1>Available Scripts</h1>
-                <button onClick={handleCopyPrompt} className="copy-btn">
-                    {copied ? 'Copied to Clipboard!' : 'Copy AI Brainstorming Prompt'}
-                </button>
+                <div className="prompt-buttons">
+                    <button 
+                        onClick={() => handleCopy(AI_BRAINSTORMING_PROMPT, setCopiedBrainstorm)} 
+                        className="copy-btn"
+                    >
+                        {copiedBrainstorm ? 'Copied!' : 'Copy Script Prompt'}
+                    </button>
+                    <button 
+                        onClick={() => handleCopy(AI_CODE_GENERATION_PROMPT, setCopiedCode)} 
+                        className="copy-btn"
+                    >
+                        {copiedCode ? 'Copied!' : 'Copy Code Prompt'}
+                    </button>
+                </div>
             </div>
             <input 
                 type="text" 
@@ -52,11 +64,11 @@ export function ScriptList() {
             {/* INFO User testing guidance */}
             {/* 
                 End-user Manual Test instructions:
-                1. Make sure to run `npm install` again to pick up `react-router-dom`.
-                2. Run `npm run dev`.
-                3. Go to `http://localhost:5173/`. You will see the "Copy AI Brainstorming Prompt" button.
-                4. Click the button. The text will change to "Copied to Clipboard!" for 2 seconds.
-                5. Open a text editor and paste (Ctrl+V/Cmd+V). Verify the complete instruction prompt is pasted.
+                1. Go to `http://localhost:5173/`. You will see two buttons now.
+                2. Test copying the "Copy Code Prompt" and verify the text in a text editor.
+                3. You can now physically delete `src/scripts/content/dummy.ts` from your OS/IDE.
+                4. The script list will automatically refresh, and "Dummy Testing Script" will disappear instantly without causing any IDE red marks or React crashes!
+                5. Restore or create a new file in `src/scripts/content/` mirroring the structure, and it will immediately appear in the UI.
             */}
             {/* ENDINFO */}
         </div>

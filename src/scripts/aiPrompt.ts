@@ -180,3 +180,82 @@ opening message, work with that instead of asking me to repeat it.
 
 Your job is not to rush me to a deliverable. Keep collaborating until I
 say the script is satisfactory.`;
+
+
+export const AI_CODE_GENERATION_PROMPT = `You are an expert TypeScript and HTML5 Canvas animation developer.
+I have a JSON array representing a video script with scenes, narrations, and visual prompts.
+I need you to write the exact TypeScript code to render this script in my custom Vanilla JS / React Canvas engine.
+
+### 1. System Architecture
+My system uses a resilient, auto-discovering plugin architecture. You only need to provide ONE self-contained TypeScript file. 
+When I drop this file into the \`src/scripts/content/\` directory, the application automatically loads it.
+
+### 2. Required Types
+Your file must import and use the \`VideoScript\` type via a relative path:
+\`\`\`typescript
+import type { VideoScript } from '../../engine/types';
+\`\`\`
+
+### 3. Scene Render Function
+Each scene requires a \`render\` function with this signature:
+\`(ctx: CanvasRenderingContext2D, progress: number, timeElapsed: number) => void\`
+- \`ctx\`: The Canvas 2D context. Use standard drawing APIs (arc, rect, bezierCurveTo, createLinearGradient, fill, stroke, etc.).
+- \`progress\`: A normalized float from \`0.0\` to \`1.0\` representing the scene's progression. **Use this to drive all animations.**
+- \`timeElapsed\`: The raw time in seconds since the scene started.
+
+### 4. Background Render Function (Optional)
+You can define a global \`renderBackground\` on the script object to draw a unified background before each scene renders:
+\`(ctx: CanvasRenderingContext2D, sceneIndex: number, timeElapsed: number) => void\`
+
+### 5. File Structure and Export Rule
+Your file **MUST** use \`export default\` to export the final \`VideoScript\` object. 
+Do not export it as a named variable.
+
+Example template:
+\`\`\`typescript
+import type { VideoScript } from '../../engine/types';
+
+// 1. Scene constants and utility functions
+const W = 1080, H = 1920;
+
+function drawMyCharacter(ctx: CanvasRenderingContext2D, x: number, y: number) { ... }
+
+// 2. Scene renderers
+function scene1(ctx: CanvasRenderingContext2D, p: number, t: number) {
+    ctx.save();
+    // Example animation: move from x=100 to x=600 based on progress
+    const x = 100 + (p * 500); 
+    
+    ctx.fillStyle = '#ff0000';
+    ctx.beginPath();
+    ctx.arc(x, H / 2, 50, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+}
+
+// 3. Script Definition Export
+const scriptDefinition: VideoScript = {
+    id: "unique-video-id", // Use a URL-safe, unique ID
+    name: "My Video Title",
+    width: W,
+    height: H,
+    scenes: [
+        {
+            duration: 8,
+            title: "Scene 1: Introduction",
+            text: "The exact spoken text goes here, matching the script.",
+            render: scene1
+        }
+    ]
+};
+
+export default scriptDefinition;
+\`\`\`
+
+### 6. Animation and Canvas Guidelines
+- Heavily utilize \`progress\` (the \`p\` variable) to interpolate positions, scales, alpha values, and rotations.
+- Always use \`ctx.save()\` at the start of visual elements and \`ctx.restore()\` at the end to prevent global canvas state leakage (like transforms, alphas, and shadowBlurs).
+- Avoid overly complex logic that blocks the main thread. Keep renders performant.
+- Be creative with colors, gradients, glowing effects (\`createRadialGradient\`), and particle systems driven by math functions (like \`Math.sin(t)\`).
+
+Please generate the complete, self-contained TypeScript file based on the JSON script I provide next.`;

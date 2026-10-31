@@ -23,11 +23,17 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 16px;
 }
 
 .header-actions h1 {
     margin: 0;
+}
+
+.prompt-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .copy-btn {
