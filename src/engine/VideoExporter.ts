@@ -42,7 +42,7 @@ async function loadTTS(gpu: boolean, onProgress: (msg: string) => void) {
 async function resampleAudio(f32: Float32Array, sr: number, to: number): Promise<Float32Array> {
     const oc = new OfflineAudioContext(1, Math.ceil(f32.length * to / sr), to);
     const b = oc.createBuffer(1, f32.length, sr);
-    b.copyToChannel(f32, 0);
+    b.copyToChannel(f32 as any, 0);
     const n = oc.createBufferSource();
     n.buffer = b;
     n.connect(oc.destination);

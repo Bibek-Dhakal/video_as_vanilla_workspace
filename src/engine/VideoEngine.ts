@@ -22,7 +22,6 @@ export class VideoEngine {
     public bfired = false;
     
     private onDoneCallback: (() => void) | null = null;
-    private keepUtterance: SpeechSynthesisUtterance | null = null;
     private t0 = 0;
     private animationFrameId = 0;
     public previewVoice = '';
@@ -165,7 +164,10 @@ export class VideoEngine {
         utterance.onend = utterance.onerror = () => {
             if (this.sceneIndex === idx) this.speechDone = true;
         };
-        this.keepUtterance = utterance;
+        
+        // Prevent Safari from garbage collecting the utterance before it ends
+        (window as any)._keepUtterance = utterance;
+        
         speechSynthesis.speak(utterance);
     }
 

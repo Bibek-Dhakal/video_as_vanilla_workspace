@@ -4,7 +4,7 @@ import type {VideoScript} from '../../engine/types';
 const W = 1080, H = 1920;
 
 // Helper to draw a glowing grid background
-function renderGlobalBackground(ctx: CanvasRenderingContext2D, sceneIndex: number, t: number) {
+function renderGlobalBackground(ctx: CanvasRenderingContext2D, _sceneIndex: number, t: number) {
     ctx.save();
     // Deep cosmic dark blue/black background gradient
     const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
@@ -36,7 +36,7 @@ function renderGlobalBackground(ctx: CanvasRenderingContext2D, sceneIndex: numbe
 // -------------------------------------------------------------------------
 // Scene 1: The Simulation's Lazy Shortcut (Hook / Wireframe Pop-in)
 // -------------------------------------------------------------------------
-function scene1(ctx: CanvasRenderingContext2D, p: number, t: number) {
+function scene1(ctx: CanvasRenderingContext2D, p: number, _t: number) {
     ctx.save();
 
     // Title / Topic Label
@@ -106,7 +106,7 @@ function scene1(ctx: CanvasRenderingContext2D, p: number, t: number) {
 // -------------------------------------------------------------------------
 // Scene 2: Frustum Culling (Split Screen / Invisible Trees)
 // -------------------------------------------------------------------------
-function scene2(ctx: CanvasRenderingContext2D, p: number, t: number) {
+function scene2(ctx: CanvasRenderingContext2D, p: number, _t: number) {
     ctx.save();
 
     // Header
@@ -227,7 +227,7 @@ function scene3(ctx: CanvasRenderingContext2D, p: number, t: number) {
 // -------------------------------------------------------------------------
 // Scene 4: Reality Rendering Engine (Wave function collapse)
 // -------------------------------------------------------------------------
-function scene4(ctx: CanvasRenderingContext2D, p: number, t: number) {
+function scene4(ctx: CanvasRenderingContext2D, _p: number, t: number) {
     ctx.save();
 
     ctx.fillStyle = '#ffffff';
@@ -270,7 +270,7 @@ function scene4(ctx: CanvasRenderingContext2D, p: number, t: number) {
 // -------------------------------------------------------------------------
 // Scene 5: Conclusion (Tree drops out / Takeaway)
 // -------------------------------------------------------------------------
-function scene5(ctx: CanvasRenderingContext2D, p: number, t: number) {
+function scene5(ctx: CanvasRenderingContext2D, p: number, _t: number) {
     ctx.save();
 
     ctx.fillStyle = '#ffffff';

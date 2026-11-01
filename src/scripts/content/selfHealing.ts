@@ -151,7 +151,7 @@ function s1(ctx: CanvasRenderingContext2D, p: number, s: number) {
 
 // Scene 2 Setup
 const CR2 = cracks(540, 760, 16, 520, 3);
-function s2(ctx: CanvasRenderingContext2D, p: number, s: number) {
+function s2(ctx: CanvasRenderingContext2D, p: number, _s: number) {
     ctx.save();
     rr(ctx, 50, 230, 980, 1060, 40);
     ctx.clip();

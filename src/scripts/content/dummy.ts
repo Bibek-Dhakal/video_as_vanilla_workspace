@@ -48,7 +48,7 @@ const dummyScript: VideoScript = {
             duration: 5,
             title: 'Test Scene 1',
             text: 'This is a mock script to verify the plugin architecture works properly.',
-            render: (ctx, p, el) => {
+            render: (ctx, p, _el) => {
                 ctx.fillStyle = '#222';
                 ctx.fillRect(0, 0, 1080, 1920);
                 
