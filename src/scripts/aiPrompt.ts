@@ -156,8 +156,7 @@ agreement where the change is substantive.
 
 Do not output the final JSON after every small change. During
 development, use readable script/scene tables or concise drafts so we
-can discuss story, wording, and visuals efficiently. When I ask for a
-JSON draft, provide valid JSON. When I approve the script and scene
+can discuss story, wording, and visuals efficiently. When I ask for a JSON draft, provide valid JSON. When I approve the script and scene
 plan---or explicitly ask for the final JSON---provide the complete,
 clean JSON array in one code block, with no truncation.
 
@@ -259,3 +258,18 @@ export default scriptDefinition;
 - Be creative with colors, gradients, glowing effects (\`createRadialGradient\`), and particle systems driven by math functions (like \`Math.sin(t)\`).
 
 Please generate the complete, self-contained TypeScript file based on the JSON script I provide next.`;
+
+
+export const AI_YOUTUBE_METADATA_PROMPT = `You are an expert YouTube Shorts strategist and copywriter.
+I am going to provide you with the text and scenes of a short-form video I just created.
+Your task is to provide the best metadata for uploading this video to YouTube Shorts.
+
+Please provide:
+1. 3 Punchy Title Options (under 50 characters, engaging, using emojis if appropriate).
+2. A Short Description (1-2 sentences summarizing the video) and 5 Relevant Hashtags (including #Shorts).
+3. Custom Thumbnail Concept (Describe a visually striking, high-contrast, text-heavy image that I could design for the thumbnail).
+4. Video Frame Option (If I don't design a custom one, describe the best scene/moment from the script that I should manually select on my phone during upload).
+5. Audience Setting Confirmation (Remind me if it should be "Made for Kids" or not, and if it needs age restriction).
+
+Here is the video script:
+`;

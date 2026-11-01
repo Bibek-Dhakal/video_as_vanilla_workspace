@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { VideoEngine } from '../engine/VideoEngine';
 import { exportVideoMp4 } from '../engine/VideoExporter';
 import type { VideoScript } from '../engine/types';
+import { AI_YOUTUBE_METADATA_PROMPT } from '../scripts/aiPrompt';
 
 interface VideoStudioProps {
     script: VideoScript;
@@ -20,6 +21,7 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
     const [statusMsg, setStatusMsg] = useState('');
     const [downloadUrl, setDownloadUrl] = useState('');
     const [isExporting, setIsExporting] = useState(false);
+    const [copiedMetadata, setCopiedMetadata] = useState(false);
     
     const abortRef = useRef(false);
 
@@ -85,6 +87,17 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
         }
     };
 
+    const handleCopyMetadataPrompt = () => {
+        const scriptContent = script.scenes.map((s, i) => `Scene ${i + 1} (${s.title}): ${s.text}`).join('\n');
+        const fullPrompt = AI_YOUTUBE_METADATA_PROMPT + '\n' + scriptContent;
+        navigator.clipboard.writeText(fullPrompt).then(() => {
+            setCopiedMetadata(true);
+            setTimeout(() => setCopiedMetadata(false), 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    };
+
     return (
         <>
             <canvas ref={canvasRef}></canvas>
@@ -104,6 +117,10 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
                 </button>
                 <button onClick={handleStop}>Stop</button>
                 
+                <button className="copy-btn" onClick={handleCopyMetadataPrompt} style={{ marginTop: '8px' }}>
+                    {copiedMetadata ? 'Copied!' : 'Copy YT Upload Prompt'}
+                </button>
+
                 <select 
                     aria-label="Preview voice" 
                     value={previewVoice} 
