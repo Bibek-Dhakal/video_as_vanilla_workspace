@@ -6,7 +6,7 @@ Welcome to the **Video as Vanilla JS Framework**! This guide will walk you throu
 
 Creating a video is broken down into three main phases:
 1. **Brainstorming the Script** (Story & Concept)
-2. **Generating the Code** (Canvas & TypeScript)
+2. **Generating the Code** (Canvas, TypeScript, & Thumbnails)
 3. **Rendering & Exporting** (Browser Studio)
 
 ---
@@ -27,7 +27,7 @@ Once you have your JSON script, it's time to turn it into Canvas animation code.
 
 1. Go back to the web application's home page and click **"Copy Code Prompt"**.
 2. Paste this into your AI, and then provide the JSON script you generated in Step 1.
-3. The AI will output a fully functional, self-contained TypeScript file.
+3. The AI will output a fully functional, self-contained TypeScript file. This file will include scenes AND a click-worthy `renderThumbnail` function.
 
 ### Step 3: Dropping in the Plugin
 
@@ -79,6 +79,18 @@ const myScript: VideoScript = {
     name: 'My First Video Short',
     width: W,
     height: H,
+    renderThumbnail: (ctx) => {
+        // Must draw background first
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, 0, W, H);
+
+        // Huge Text must be drawn LAST so it sits on top!
+        // We use maxWidth (W - 80) to ensure text isn't cut off by the edges.
+        ctx.fillStyle = '#ff0055';
+        ctx.font = '900 130px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('CLICK ME!', W / 2, 400, W - 80);
+    },
     scenes: [
         {
             duration: 5, // Estimated seconds
@@ -93,11 +105,13 @@ const myScript: VideoScript = {
 export default myScript;
 ```
 
-## 🎥 Previewing and Exporting
+## 🎥 Previewing, Exporting & Refining Thumbnails
 
 1. Click on your newly created script in the UI.
-2. Hit **"Preview with voice"**. The browser's native `SpeechSynthesis` API will read the script while the Canvas loop renders your animations in real-time.
-3. When you are happy with the visual timing, click **"Export MP4"**.
+2. When the video isn't playing, your **Thumbnail** is rendered beautifully on the canvas preview screen.
+3. Hit **"Preview with voice"**. The browser's native `SpeechSynthesis` API will read the script while the Canvas loop renders your animations in real-time.
+4. **Refining the Thumbnail**: If the thumbnail text gets cut off or looks boring, click **"Refine Thumbnail"**. This copies a specialized prompt *with your current video's context attached*. Paste it to your AI, and it will rewrite a fixed `renderThumbnail` function for you to drop back into your file.
+5. When you are happy with the visual timing, click **"Export MP4"**.
    - *Note:* The first time you export, the app will download a ~90MB high-quality AI voice model (`Kokoro-82M-v1.0-ONNX`).
-   - You can tick "Use GPU" to process the audio up to 10x faster (requires WebGPU enabled in your browser).
-4. Keep the tab open while it renders. Once complete, it will automatically download your `.mp4` file, ready to be uploaded to YouTube Shorts, TikTok, or Instagram!
+   - You can tick "Use GPU" to process the audio up to 10x faster.
+6. Keep the tab open while it renders. Once complete, it will automatically download your `.mp4` file AND your `.png` Thumbnail file, ready to be uploaded to YouTube Shorts, TikTok, or Instagram!

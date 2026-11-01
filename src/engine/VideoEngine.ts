@@ -66,14 +66,18 @@ export class VideoEngine {
     }
 
     private drawStandby() {
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.fillStyle = 'rgba(0,0,0,.45)';
-        this.ctx.fillRect(0, 0, this.width, this.height);
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = '800 70px system-ui';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('Press Preview or Export', this.width / 2, this.height / 2 + 20);
+        if (this.script.renderThumbnail) {
+            this.script.renderThumbnail(this.ctx);
+        } else {
+            this.ctx.fillStyle = '#000';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.ctx.fillStyle = 'rgba(0,0,0,.45)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '800 70px system-ui';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('Press Preview or Export', this.width / 2, this.height / 2 + 20);
+        }
     }
 
     private drawHUD(idx: number, el: number, duration: number) {

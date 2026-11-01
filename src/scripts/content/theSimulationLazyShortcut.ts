@@ -324,6 +324,62 @@ function scene5(ctx: CanvasRenderingContext2D, p: number, t: number) {
     ctx.restore();
 }
 
+function renderThumb(ctx: CanvasRenderingContext2D) {
+    // --- 1. Background ---
+    renderGlobalBackground(ctx, 0, 0);
+
+    // --- 2. Visuals ---
+    const centerX = W / 2;
+    const centerY = H / 2 + 150;
+
+    // Giant glowing eye of the observer
+    ctx.strokeStyle = '#00ff80';
+    ctx.lineWidth = 20;
+    ctx.shadowColor = '#00ff80';
+    ctx.shadowBlur = 80;
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, 350, 180, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = '#00ff80';
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 90, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.shadowBlur = 0;
+
+    // Glitchy Wireframe Overlay
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+    ctx.lineWidth = 8;
+    for(let i = 0; i < 15; i++) {
+        ctx.strokeRect(Math.random() * W, Math.random() * H, 120 + Math.random() * 100, 120 + Math.random() * 100);
+    }
+
+    // --- 3. Text (LAST to sit strictly on top) ---
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 120px sans-serif'; // Reduced font size to be safe
+    ctx.textAlign = 'center';
+    
+    // Add thick black shadow for readability
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 40;
+    
+    // Pass W - 80 max constraint
+    ctx.fillText('THE UNIVERSE', W / 2, 280, W - 80);
+    
+    ctx.fillStyle = '#ff0055';
+    ctx.font = '900 120px sans-serif'; // Must re-apply before measuring/drawing
+    ctx.fillText('IS LAZY.', W / 2, 450, W - 80);
+    
+    // Add thick stroke around text to pop off bright backgrounds
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#000000';
+    ctx.strokeText('THE UNIVERSE', W / 2, 280, W - 80);
+    ctx.strokeText('IS LAZY.', W / 2, 450, W - 80);
+
+    ctx.shadowBlur = 0;
+}
+
 // 3. Script Definition Export
 const scriptDefinition: VideoScript = {
     id: "the-simulations-lazy-shortcut",
@@ -331,6 +387,7 @@ const scriptDefinition: VideoScript = {
     width: W,
     height: H,
     renderBackground: renderGlobalBackground,
+    renderThumbnail: renderThumb,
     scenes: [
         {
             duration: 7,

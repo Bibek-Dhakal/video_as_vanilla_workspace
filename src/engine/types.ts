@@ -12,4 +12,5 @@ export interface VideoScript {
     height: number;
     scenes: Scene[];
     renderBackground?: (ctx: CanvasRenderingContext2D, sceneIndex: number, timeElapsed: number) => void;
+    renderThumbnail?: (ctx: CanvasRenderingContext2D) => void;
 }

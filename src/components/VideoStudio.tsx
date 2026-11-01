@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { VideoEngine } from '../engine/VideoEngine';
 import { exportVideoMp4 } from '../engine/VideoExporter';
 import type { VideoScript } from '../engine/types';
-import { AI_YOUTUBE_METADATA_PROMPT } from '../scripts/aiPrompt';
+import { AI_YOUTUBE_METADATA_PROMPT, AI_THUMBNAIL_REFINE_PROMPT } from '../scripts/aiPrompt';
 
 interface VideoStudioProps {
     script: VideoScript;
@@ -22,6 +22,7 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
     const [downloadUrl, setDownloadUrl] = useState('');
     const [isExporting, setIsExporting] = useState(false);
     const [copiedMetadata, setCopiedMetadata] = useState(false);
+    const [copiedThumbPrompt, setCopiedThumbPrompt] = useState(false);
     
     const abortRef = useRef(false);
 
@@ -61,6 +62,36 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
         if (engineRef.current) engineRef.current.stop();
         if (!isExporting) setStatusMsg('');
     };
+    
+    const handleExportThumbnail = () => {
+        if (!script) return;
+        const canvas = document.createElement('canvas');
+        canvas.width = script.width;
+        canvas.height = script.height;
+        const ctx = canvas.getContext('2d')!;
+        
+        if (script.renderThumbnail) {
+            script.renderThumbnail(ctx);
+        } else {
+            if (script.renderBackground) {
+                script.renderBackground(ctx, 0, 0);
+            } else {
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, script.width, script.height);
+            }
+            if (script.scenes && script.scenes.length > 0) {
+                script.scenes[0].render(ctx, 0.5, script.scenes[0].duration * 0.5);
+            }
+        }
+        
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${script.id}-thumbnail.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
 
     const handleExport = async () => {
         if (!engineRef.current || isExporting) return;
@@ -76,7 +107,11 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
                 useGpu,
                 (msg, url) => {
                     if (msg) setStatusMsg(msg);
-                    if (url) setDownloadUrl(url);
+                    if (url) {
+                        setDownloadUrl(url);
+                        // Trigger thumbnail export automatically alongside MP4
+                        handleExportThumbnail();
+                    }
                 },
                 () => abortRef.current
             );
@@ -93,6 +128,21 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
         navigator.clipboard.writeText(fullPrompt).then(() => {
             setCopiedMetadata(true);
             setTimeout(() => setCopiedMetadata(false), 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    };
+
+    const handleCopyThumbPrompt = () => {
+        // Strip out the functions and only pass the text/title context to the AI
+        const contextData = {
+            name: script.name,
+            scenes: script.scenes.map((s, i) => ({ scene: i + 1, title: s.title, text: s.text }))
+        };
+        const fullPrompt = AI_THUMBNAIL_REFINE_PROMPT + '\n```json\n' + JSON.stringify(contextData, null, 2) + '\n```';
+        navigator.clipboard.writeText(fullPrompt).then(() => {
+            setCopiedThumbPrompt(true);
+            setTimeout(() => setCopiedThumbPrompt(false), 2000);
         }).catch(err => {
             console.error('Failed to copy text: ', err);
         });
@@ -115,17 +165,26 @@ export function VideoStudio({ script, onBack }: VideoStudioProps) {
                 <button className="rec" onClick={handleExport} disabled={isExporting}>
                     Export MP4 (works anywhere)
                 </button>
+                <button onClick={handleExportThumbnail} disabled={isExporting}>
+                    Export Thumbnail (PNG)
+                </button>
                 <button onClick={handleStop}>Stop</button>
                 
-                <button className="copy-btn" onClick={handleCopyMetadataPrompt} style={{ marginTop: '8px' }}>
-                    {copiedMetadata ? 'Copied!' : 'Copy YT Upload Prompt'}
-                </button>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                    <button className="copy-btn" onClick={handleCopyMetadataPrompt} style={{ flex: 1, padding: '10px' }}>
+                        {copiedMetadata ? 'Copied!' : 'Copy YT Prompt'}
+                    </button>
+                    <button className="copy-btn" onClick={handleCopyThumbPrompt} style={{ flex: 1, padding: '10px' }}>
+                        {copiedThumbPrompt ? 'Copied!' : 'Refine Thumbnail'}
+                    </button>
+                </div>
 
                 <select 
                     aria-label="Preview voice" 
                     value={previewVoice} 
                     onChange={e => setPreviewVoice(e.target.value)}
                     disabled={isExporting}
+                    style={{ marginTop: '8px' }}
                 >
                     {voices.map((v, i) => (
                         <option key={i} value={v.name}>{v.name} ({v.lang})</option>

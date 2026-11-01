@@ -202,9 +202,18 @@ Each scene requires a \`render\` function with this signature:
 - \`progress\`: A normalized float from \`0.0\` to \`1.0\` representing the scene's progression. **Use this to drive all animations.**
 - \`timeElapsed\`: The raw time in seconds since the scene started.
 
-### 4. Background Render Function (Optional)
-You can define a global \`renderBackground\` on the script object to draw a unified background before each scene renders:
-\`(ctx: CanvasRenderingContext2D, sceneIndex: number, timeElapsed: number) => void\`
+### 4. Optional Render Functions
+You can define these optional functions on the script object:
+- \`renderBackground\`: \`(ctx: CanvasRenderingContext2D, sceneIndex: number, timeElapsed: number) => void\`
+  Draws a unified background before each scene renders.
+- \`renderThumbnail\`: \`(ctx: CanvasRenderingContext2D) => void\`
+  **CRITICAL**: You MUST draw a highly CLICK-WORTHY YouTube-style thumbnail. 
+  Rules for a click-worthy thumbnail:
+  1. HUGE, BOLD TEXT (max 3-5 words). Use extreme contrast (e.g. bright yellow/red/cyan on dark backgrounds).
+  2. Feature one massive central visual that represents the most shocking/interesting part of the script.
+  3. **DRAW THE TEXT LAST!** The text must be rendered after all backgrounds, visuals, particles, and glares so it sits strictly on top and is completely readable.
+  4. Always add a heavy black shadow (\`ctx.shadowColor = '#000'; ctx.shadowBlur = 30;\`) or a stroke behind the text to ensure it pops off bright elements.
+  5. **KEEP TEXT INSIDE THE CANVAS!** The canvas is 1080px wide. Use safe font sizes (100px - 130px max) and break long phrases into multiple lines. You MUST pass a \`maxWidth\` to \`fillText\` and \`strokeText\` (e.g., \`W - 80\`) to guarantee text never gets cut off at the edges.
 
 ### 5. File Structure and Export Rule
 Your file **MUST** use \`export default\` to export the final \`VideoScript\` object. 
@@ -238,6 +247,28 @@ const scriptDefinition: VideoScript = {
     name: "My Video Title",
     width: W,
     height: H,
+    renderThumbnail: (ctx) => {
+        // Draw a highly click-worthy thumbnail
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, W, H);
+        
+        // --- DRAW VISUALS FIRST ---
+        // Huge central visual here...
+        
+        // --- DRAW TEXT LAST ---
+        ctx.fillStyle = '#ff0055';
+        ctx.font = '900 130px sans-serif'; // Safe size
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000000';
+        ctx.shadowBlur = 40;
+        
+        // Use W - 80 for maxWidth to ensure it never gets cut off!
+        ctx.fillText('SHOCKING', W/2, 350, W - 80);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('TRUTH!', W/2, 500, W - 80);
+        ctx.shadowBlur = 0;
+    },
     scenes: [
         {
             duration: 8,
@@ -272,4 +303,19 @@ Please provide:
 5. Audience Setting Confirmation (Remind me if it should be "Made for Kids" or not, and if it needs age restriction).
 
 Here is the video script:
+`;
+
+export const AI_THUMBNAIL_REFINE_PROMPT = `I need you to write (or rewrite) the \`renderThumbnail(ctx: CanvasRenderingContext2D)\` function for my TypeScript Canvas video script. 
+Below is the JSON context of the scenes so you know what the video is about.
+
+CRITICAL RULES FOR THE THUMBNAIL:
+1. **DRAW TEXT LAST!** The hook text MUST be drawn at the very end of the function. Never let visuals, glows, or particles obscure the text.
+2. Use HUGE, BOLD TEXT (max 3-5 words) with extreme contrast (e.g., neon colors against a dark background).
+3. Apply a heavy black shadow (\`ctx.shadowColor = '#000'; ctx.shadowBlur = 40;\`) or a solid stroke around the text so it pops off any bright visuals behind it.
+4. Feature a massive, intriguing central visual that clearly illustrates the core hook of the video. Make it punchy and easy to recognize instantly.
+5. **KEEP TEXT INSIDE THE CANVAS!** The canvas is usually 1080px wide (W=1080, H=1920). Use safe font sizes (100px - 130px max). If the text is long, break it into multiple lines. ALWAYS provide a \`maxWidth\` parameter to \`fillText\` and \`strokeText\` (e.g., \`1000\` or \`W - 80\`) to ensure text never overflows the edges.
+
+Please reply ONLY with the updated \`renderThumbnail\` function code that I can drop into my existing file. 
+
+Here is the video context:
 `;

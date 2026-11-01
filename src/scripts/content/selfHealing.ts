@@ -468,11 +468,68 @@ function bg(ctx: CanvasRenderingContext2D, i: number, s: number) {
     }
 }
 
+function renderThumb(ctx: CanvasRenderingContext2D) {
+    // --- 1. Background ---
+    const g = ctx.createRadialGradient(W/2, H/2, 100, W/2, H/2, H);
+    g.addColorStop(0, '#112244');
+    g.addColorStop(1, '#000000');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // --- 2. Visuals ---
+    // Draw huge shattered phone in center
+    ctx.save();
+    ctx.translate(W/2, H/2 + 250);
+    ctx.scale(1.7, 1.7);
+    phone(ctx);
+    ctx.restore();
+
+    // Huge glowing crack overlay magically stitching itself
+    ctx.save();
+    ctx.translate(W/2, H/2 + 250);
+    ctx.scale(1.7, 1.7);
+    ctx.shadowColor = '#5dffb0';
+    ctx.shadowBlur = 40;
+    drawCracks(ctx, CR1, 1, '#ffffff', 6);
+    ctx.restore();
+
+    // Magic glowing healing particles floating around
+    for(let i=0; i<30; i++) {
+        glow(ctx, Math.random()*W, H/2 + Math.random()*800, Math.random()*25+10, '93,255,176', 0.85);
+    }
+
+    // --- 3. Text (LAST to sit strictly on top) ---
+    ctx.fillStyle = '#ff3366';
+    ctx.font = '900 120px system-ui'; // Scaled down to prevent overflow
+    ctx.textAlign = 'center';
+    
+    // Thick shadow behind text
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 40;
+    
+    // maxWidth applied to ensure it fits the canvas
+    ctx.fillText('GLASS THAT', W/2, 280, W - 80);
+    
+    ctx.fillStyle = '#38e8ff';
+    ctx.font = '900 120px system-ui'; // Re-apply for safety
+    ctx.fillText('HEALS ITSELF?!', W/2, 450, W - 80);
+    
+    // Add strokes for extra pop over the bright background
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#000000';
+    ctx.strokeText('GLASS THAT', W/2, 280, W - 80);
+    ctx.strokeText('HEALS ITSELF?!', W/2, 450, W - 80);
+
+    ctx.shadowBlur = 0;
+}
+
 const selfHealingScript: VideoScript = {
     id: 'self-healing',
     name: 'Self-healing materials: 1080×1920 Short',
     width: W,
     height: H,
+    renderBackground: bg,
+    renderThumbnail: renderThumb,
     scenes: [
         {
             duration: 8,
@@ -510,8 +567,7 @@ const selfHealingScript: VideoScript = {
             text: "From aerospace coatings to next-gen electronics, we are shifting from materials that merely resist wear to materials that heal like living skin.",
             render: s6
         }
-    ],
-    renderBackground: bg
+    ]
 };
 
 export default selfHealingScript;

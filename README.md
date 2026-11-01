@@ -11,9 +11,9 @@
 - 🚀 **Zero-Server Rendering**: Everything runs locally in your browser. No cloud rendering fees, no upload limits.
 - 🎨 **Vanilla Canvas Power**: Create complex 2D animations, gradients, physics, and particle systems using standard HTML5 Canvas APIs.
 - 🗣️ **Built-in AI TTS**: Uses [Kokoro-JS](https://github.com/huggingface/kokoro.js) for high-quality, on-device Text-to-Speech generation (WebGPU accelerated).
-- 📦 **WebCodecs MP4 Export**: Multiplexes raw audio and video frames directly into an H.264 MP4 file that works everywhere (YouTube, TikTok, Instagram).
+- 📦 **WebCodecs MP4 & Thumbnail Export**: Multiplexes raw audio and video frames directly into an H.264 MP4 file that works everywhere (YouTube, TikTok, Instagram). Automatically generates stunning YouTube-style `.png` thumbnails.
 - 🔌 **Auto-Discovering Plugin Architecture**: Just drop a new `.ts` script file into the `content` folder, and the studio automatically detects and lists it. No wiring required.
-- 🤖 **AI-Workflow Native**: Comes with built-in prompt templates designed to help LLMs (like ChatGPT or Claude) write flawless video scripts and Canvas code for you.
+- 🤖 **AI-Workflow Native**: Comes with built-in prompt templates designed to help LLMs (like ChatGPT or Claude) write flawless video scripts, Canvas code, and click-worthy thumbnails for you.
 
 ## 🚀 Quick Start
 
